@@ -59,24 +59,32 @@ function update(){
     //Malovani hrace
     board.ctx.drawImage(hrac.img, hrac.x, hrac.y);
 
-    //malovani pipes
+    //Nalovani pipes
     for (let index = 0; index < pipesArray.length; index++) {
         let pipe = pipesArray[index];
         pipe.x += fyzika.velocityX;
         board.ctx.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
-
+    }
+    // Malovani pipes obracene
+    for (let index = 0; index < pipesArray.length; index++) {
+        let pipe = pipesArray[index];
+        board.ctx.save();
+        board.ctx.scale(1, -1);
+        board.ctx.drawImage(pipe.img, pipe.x, -pipe.y - pipe.height, pipe.width, pipe.height);
+        board.ctx.restore();
     }
 
-    //resetovani snimku
+    //Resetovani snimku
     requestAnimationFrame(update);
 }
-  
+
 //------------------------------------------------------------
 function generacePipes(){
-    let randomPipeY = 1;
-    let topPipe = new Pipes(board.width, randomPipeY);
-
-    pipesArray.push(topPipe);
+    //512 je vyska pipes
+    let randomPipeY = 1 - 512/ 4 - Math.random()* (512/2);
+    let pipe = new Pipes(board.width, randomPipeY);
+    
+    pipesArray.push(pipe);
 }
 
 //---------------------------------------------------------------
@@ -93,5 +101,5 @@ window.onload = function (){
 
 
     update();
-    setInterval(generacePipes, 2500);
+    setInterval(generacePipes, 1500);
 }    
