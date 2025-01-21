@@ -3,5 +3,5 @@ body {
     text-align: center;
 }
 #hra{
-    background-image: url("/pictures/background-night.png");
+    background-image: url("./pictures/background-night.png");
 }
