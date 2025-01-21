@@ -1,0 +1,7 @@
+body {
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+}
+#hra{
+    background-image: url("/pictures/background-night.png");
+}
