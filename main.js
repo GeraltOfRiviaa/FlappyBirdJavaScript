@@ -33,9 +33,9 @@ class Pipes {
 
 class Fyzika {
     constructor() {
-        this.velocityX = -5;
+        this.velocityX = -2;
         this.velocityY = 0;
-        this.gravitace = 0.4;
+        this.gravitace = 0.1;
     }
 }
 
@@ -49,18 +49,38 @@ let imgPipe = new Image();
 imgPipe.src = "./pictures/pipe-red.png";
 endImg = new Image();
 endImg.src = "./pictures/gameover.png"
-baseImg = new Image();
-baseImg.src = "./pictures/base.png";
+let restartButton = document.getElementById("restart");
+let gameStarted = false;
+let score = 0;
+
 
 function update() {
-    if(gameOver) {
-        board.ctx.drawImage(endImg, 100,300)
+    
+    if (!gameStarted) {
+        // Zastavení hry, dokud hráč nezačne
+        board.ctx.clearRect(0, 0, board.width, board.height);
+        board.ctx.drawImage(board.imgBack, 0, 0);
+        board.ctx.fillStyle = "white";
+        board.ctx.font = "24px Arial";
+        board.ctx.textAlign = "center";
+        board.ctx.fillText('STISKNI SPACE', board.width / 2, board.height / 2);
+        requestAnimationFrame(update);
+        board.ctx.drawImage(hrac.img, hrac.x, hrac.y);
         return;
     }
     
+    if(gameOver) {
+        board.ctx.drawImage(endImg, 100,300)
+        restartButton.style.display = "block";
+        return;
+    }
+    restartButton.addEventListener("click", () => {
+        window.location.reload();
+    });
+    
     board.ctx.clearRect(0, 0, board.width, board.height);
     board.ctx.drawImage(board.imgBack, 0, 0);
-    board.ctx.drawImage(baseImg, 0,530);
+    
     
     // Malování hráče
     board.ctx.drawImage(hrac.img, hrac.x, hrac.y);
@@ -85,6 +105,11 @@ function update() {
         board.ctx.scale(1, -1);
         board.ctx.drawImage(imgPipe, pipe.x, topY, pipe.width, pipe.height);
         board.ctx.restore();
+
+        if (pipe.x + pipe.width < hrac.x && !pipe.prosla) {
+            score++;
+            pipe.prosla = true;
+        }
 /*
         // Debug zobrazení hitboxů
         if (DEBUG_MODE) {
@@ -105,6 +130,10 @@ function update() {
             checkCollision(hrac, pipe.x, -topY - pipe.height)) { // kontrola horní trubky
             gameOver = true;
         }
+        board.ctx.fillStyle = "white";
+        board.ctx.font = "24px Arial";
+        board.ctx.fillText("Score: " + score, 50, 25);
+        
     }
 
     // Mazání trubek mimo obrazovku
@@ -126,9 +155,9 @@ function checkCollision(hrac, pipeX, pipeY) {
     let pipeBottom = pipeY + 512;
 
     return hracRight > pipeLeft && 
-           hracLeft < pipeRight && 
-           hracBottom > pipeTop && 
-           hracTop < pipeBottom;
+            hracLeft < pipeRight && 
+            hracBottom > pipeTop && 
+            hracTop < pipeBottom;
 }
 
 function generacePipes() {
@@ -143,7 +172,11 @@ function generacePipes() {
 
 function moveBird(key) {
     if (key.code == "Space" || key.code == "ArrowUp" || key.code == "KeyW") {
-        fyzika.velocityY = -6;
+        if (!gameStarted) {
+            gameStarted = true; // Hra začíná
+            setInterval(generacePipes, 1500); // Začíná generování trubek
+        }
+        fyzika.velocityY = -4;
     }
 }
 
@@ -152,8 +185,11 @@ window.onload = function() {
     board.width = 360;
     board.height = 640;
     board.ctx = board.hra.getContext("2d");
+    restartButton.style.display = "none";
+    
+    
 
     update();
-    setInterval(generacePipes, 1500);
     document.addEventListener("keydown", moveBird);
+    
 }
