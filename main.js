@@ -55,7 +55,7 @@ let score = 0;
 
 
 function update() {
-    
+
     if (!gameStarted) {
         // Zastavení hry, dokud hráč nezačne
         board.ctx.clearRect(0, 0, board.width, board.height);
@@ -68,16 +68,18 @@ function update() {
         board.ctx.drawImage(hrac.img, hrac.x, hrac.y);
         return;
     }
-    
+    //Zastavení hry a ukázání tlačítka
     if(gameOver) {
         board.ctx.drawImage(endImg, 100,300)
         restartButton.style.display = "block";
         return;
     }
+    //Tlačítko pro resetování hry
     restartButton.addEventListener("click", () => {
         window.location.reload();
     });
     
+    //Vyresetování canvasu, aby se nám nestackovali obrázky
     board.ctx.clearRect(0, 0, board.width, board.height);
     board.ctx.drawImage(board.imgBack, 0, 0);
     
@@ -109,6 +111,9 @@ function update() {
         if (pipe.x + pipe.width < hrac.x && !pipe.prosla) {
             score++;
             pipe.prosla = true;
+        }
+        if (pipe.prosla == true && pipe.x == -5){
+            pipesArray.shift();
         }
 /*
         // Debug zobrazení hitboxů
