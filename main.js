@@ -22,22 +22,24 @@ class Hrac {
     }
 }
 class Pipes {
-    constructor(x,y,) {
+    constructor(x,y) {
         this.width = 64;
         this.height = 512;
         this.x = x;
         this.y = y;
         this.prosla = false;
+
         this.array = [];
         this.img = new Image();
         this.img.src = "./pictures/pipe-red.png";  
-
         
     }
 }
 class Fyzika {
     constructor() {
         this.velocityX = -2;
+        this.velocityY = 0;
+        this.gravitace = 0.4;
     }
 }
 
@@ -52,28 +54,31 @@ function update(){
 
     board.ctx.drawImage(board.imgBack, 0,0);
     
-    //Malovani hráčova boxu
-    board.ctx.fillStyle = "red";
-    board.ctx.fillRect(hrac.x, hrac.y,hrac.width, hrac.height);
+    
 
     //Malovani hrace
-    board.ctx.drawImage(hrac.img, hrac.x, hrac.y);
+        board.ctx.drawImage(hrac.img, hrac.x, hrac.y);
+    //Fyzika hráče
+    fyzika.velocityY += fyzika.gravitace;
+    hrac.y = Math.max(hrac.y + fyzika.velocityY,0) && Math.min(hrac.y + fyzika.velocityY,board.height - 24);
 
-    //Nalovani pipes
+
+    //Malovani pipes horni
     for (let index = 0; index < pipesArray.length; index++) {
         let pipe = pipesArray[index];
         pipe.x += fyzika.velocityX;
-        board.ctx.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
+        board.ctx.drawImage(pipe.img, pipe.x, pipe.y + 600, pipe.width, pipe.height);
     }
-    // Malovani pipes obracene
+    // Malovani pipes dolni
     for (let index = 0; index < pipesArray.length; index++) {
         let pipe = pipesArray[index];
+        pipe.x += fyzika.velocityX;
         board.ctx.save();
         board.ctx.scale(1, -1);
-        board.ctx.drawImage(pipe.img, pipe.x, -pipe.y - pipe.height, pipe.width, pipe.height);
+        board.ctx.drawImage(pipe.img, pipe.x, -pipe.y - pipe.height + 80, pipe.width, pipe.height);
         board.ctx.restore();
     }
-
+    
     //Resetovani snimku
     requestAnimationFrame(update);
 }
@@ -82,11 +87,17 @@ function update(){
 function generacePipes(){
     //512 je vyska pipes
     let randomPipeY = 1 - 512/ 4 - Math.random()* (512/2);
-    let pipe = new Pipes(board.width, randomPipeY);
+    let pipe1 = new Pipes(board.width, randomPipeY);
+    //let pipe2 = new Pipes(board.width, randomPipeY);
     
-    pipesArray.push(pipe);
+    pipesArray.push(pipe1);
 }
-
+//---------------------------------------------------------------
+function moveBird(key){
+    if (key.code == "Space" ||key.code == "ArrowUp" ||key.code == "W"){
+        fyzika.velocityY = -6;
+    }
+}
 //---------------------------------------------------------------
 
 window.onload = function (){
@@ -94,12 +105,9 @@ window.onload = function (){
     board.width = 360;
     board.height =  640;
     board.ctx = board.hra.getContext("2d");
-        
-    //malovani hrace
-    board.ctx.drawImage(hrac.img, hrac.x, hrac.y);
-
-
 
     update();
     setInterval(generacePipes, 1500);
+    document.addEventListener("keydown", moveBird);
 }    
+
