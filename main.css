@@ -4,10 +4,12 @@ body {
 }
 #hra{
     background-image: url("./pictures/background-night.png");
+    /*
     position: absolute;
     top: 300px;
     left: 50%;
     transform: translateX(-50%);
+    */
 }
 #restart{
     position: absolute;
