@@ -6,14 +6,13 @@ body {
     background-image: url("./pictures/background-night.png");
     
     position: absolute;
-    top: 0px;
     left: 50%;
     transform: translateX(-50%);
     
 }
 #restart{
     position: absolute;
-    top: 700px;
+    top: 400px;
     left: 50%;
     transform: translateX(-50%);
     padding: 10px 20px;
